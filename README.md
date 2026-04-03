@@ -3,16 +3,16 @@
 ```batch
 cd .\swagger && winget install OpenJS.NodeJS.LTS
 ```
-2. Stoplight Studioをインストールする
+2. Stoplight Prismをインストールする
 ```batch
-npm install --save-dev @stoplight
+npm install --save-dev @stoplight/prism-cli
 ```
-3. prism mock をポート8089で起動する
+3. prism mockをポート8089で起動する
 ```batch
-npx prism mock src/main/resources/static/openapi/contract-api.yaml --port 8089 --hostname 0.0.0.0
+npx prism mock src/main/resources/static/openapi/contract-api.yaml --port 8089 --host 0.0.0.0
 ```
-4. demoプロジェクトフォルダで画面を起動する
+4. 別のターミナルを開き、demoプロジェクトフォルダで画面を起動する
 ```batch
-.\gradlew bootRun
+cd .\demo && .\gradlew bootRun
 ```
 5. [http://localhost:8080/contract/product](http://localhost:8080/contract/product)をブラウザで開く
