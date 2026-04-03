@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>申込可否判定</title>
+</head>
+<body>
+
+<h2>申込可否判定</h2>
+
+<form action="/contract/eligibility" method="post">
+
+    <input type="hidden" name="productId" th:value="${productId}">
+    <input type="hidden" name="planId" th:value="${planId}">
+    <input type="hidden" name="age" th:value="${age}">
+
+    <h3>居住地（都道府県）</h3>
+    <select name="prefecture" required>
+        <option value="">選択してください</option>
+        <option>東京都</option>
+        <option>神奈川県</option>
+        <option>千葉県</option>
+        <option>埼玉県</option>
+        <!-- 必要に応じて追加 -->
+    </select>
+
+    <h3>既往症</h3>
+    <label><input type="radio" name="hasMedicalHistory" value="false" required> なし</label>
+    <label><input type="radio" name="hasMedicalHistory" value="true"> あり</label>
+
+    <br><br>
+    <button type="submit">判定する</button>
+</form>
+
+<div th:if="${eligible != null}">
+    <h3>--- 判定結果 ---</h3>
+    <p th:if="${eligible}">申込可能です</p>
+    <p th:if="${!eligible}" th:text="${reason}"></p>
+</div>
+
+</body>
+</html>

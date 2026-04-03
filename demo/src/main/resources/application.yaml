@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: demo
+client:
+  baseUrl: http://localhost:8089

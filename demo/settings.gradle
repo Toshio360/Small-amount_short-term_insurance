@@ -1,0 +1,3 @@
+rootProject.name = 'demo'
+// Swagger is an external build; include as composite build
+includeBuild('../swagger')

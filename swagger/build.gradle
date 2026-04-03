@@ -1,0 +1,55 @@
+plugins {
+    id 'java'
+    id 'maven-publish'
+    id 'org.openapi.generator' version '7.2.0'
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			from components.java
+		}
+	}
+}
+
+group = 'com.example.swagger'
+version = '1.0.0'
+
+repositories {
+    mavenCentral()
+}
+
+sourceSets {
+    main {
+        java {
+            srcDir "$buildDir/generated/src/main/java"
+        }
+    }
+}
+
+
+def openapiFile = "$projectDir/src/main/resources/static/openapi/contract-api.yaml"
+
+tasks.register('validateOpenApi', Exec) {
+    description = "Validate OpenAPI YAML"
+    group = "verification"
+    commandLine "sh", "-c", "npx @redocly/cli lint ${openapiFile}"
+}
+
+openApiGenerate {
+    generatorName = "html2"
+    inputSpec = openapiFile
+    outputDir = "$buildDir/generated-docs"
+}
+
+tasks.register('generateDocs') {
+    dependsOn openApiGenerate
+    description = "Generate HTML API documentation"
+    group = "documentation"
+}
+
+jar {
+    from(openapiFile) {
+        into "openapi"
+    }
+}

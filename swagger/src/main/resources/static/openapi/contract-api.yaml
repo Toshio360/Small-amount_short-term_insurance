@@ -1,0 +1,207 @@
+openapi: 3.0.3
+info:
+  title: SmallAmountInsurance Contract API
+  version: 1.0.0
+
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /products:
+    get:
+      summary: 商品一覧取得
+      description: 販売中の少額短期保険商品の一覧を取得する
+      responses:
+        '200':
+          description: 商品一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+              example:
+                - productId: "product_001"
+                  name: "医療保障プラス"
+                  description: "入院・通院をカバーする少額短期保険（最長2年）"
+                - productId: "product_002"
+                  name: "ガン保障パック"
+                  description: "ガン診断時一時金・先進医療をカバー（最長2年）"
+                - productId: "product_003"
+                  name: "傷害保障基本"
+                  description: "事故による怪我の入院・通院・死亡をカバー（最長2年）"
+
+  /products/{productId}/plans:
+    get:
+      summary: プラン一覧取得
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: プラン一覧
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Plan'
+              example:
+                - planId: "plan_basic"
+                  name: "基本プラン"
+                  coverageAmount: 1000000
+                  basePremium: 5000
+                - planId: "plan_premium"
+                  name: "プレミアムプラン"
+                  coverageAmount: 2000000
+                  basePremium: 9000
+
+  /estimate:
+    post:
+      summary: 保険料見積
+      description: 年齢・プラン・保険期間に基づき保険料を算出する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EstimateRequest'
+      responses:
+        '200':
+          description: 見積結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EstimateResponse'
+
+  /eligibility:
+    post:
+      summary: 申込可否判定
+      description: 年齢・居住地・加入条件に基づき申込可否を判定する
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EligibilityRequest'
+      responses:
+        '200':
+          description: 判定結果
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EligibilityResponse'
+
+components:
+  schemas:
+    Product:
+      description: 少額短期保険商品
+      type: object
+      properties:
+        productId:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+      example:
+        productId: "product_001"
+        name: "医療保障プラス"
+        description: "入院・通院をカバーする少額短期保険（最長2年）"
+
+    Plan:
+      description: プラン
+      type: object
+      properties:
+        planId:
+          type: string
+        name:
+          type: string
+        coverageAmount:
+          type: integer
+        basePremium:
+          type: integer
+      example:
+        planId: "plan_basic"
+        name: "基本プラン"
+        coverageAmount: 1000000
+        basePremium: 5000
+
+    EstimateRequest:
+      description: 保険料見積リクエスト
+      type: object
+      properties:
+        productId:
+          type: string
+        planId:
+          type: string
+        age:
+          type: integer
+        period:
+          type: integer
+      required:
+        - productId
+        - planId
+        - age
+        - period
+      example:
+        productId: "product_001"
+        planId: "plan_basic"
+        age: 30
+        period: 12
+
+    EstimateResponse:
+      description: 保険料見積結果
+      type: object
+      properties:
+        premium:
+          type: integer
+        breakdown:
+          type: object
+          properties:
+            base:
+              type: integer
+            discount:
+              type: integer
+            total:
+              type: integer
+      example:
+        premium: 60000
+        breakdown:
+          base: 60000
+          discount: 0
+          total: 60000
+
+    EligibilityRequest:
+      description: 申込可否判定リクエスト
+      type: object
+      properties:
+        age:
+          type: integer
+        prefecture:
+          type: string
+        hasMedicalHistory:
+          type: boolean
+      required:
+        - age
+        - prefecture
+        - hasMedicalHistory
+      example:
+        age: 30
+        prefecture: "東京都"
+        hasMedicalHistory: false
+
+    EligibilityResponse:
+      description: 申込可否判定結果
+      type: object
+      properties:
+        eligible:
+          type: boolean
+        reason:
+          type: string
+      example:
+        eligible: true
+        reason: "申込要件を満たしています"
