@@ -14,8 +14,8 @@ public class DemoApplication {
 	}
 
 	@org.springframework.context.annotation.Bean
-	public com.example.client.api.DefaultApi defaultApi() {
-		com.example.client.api.DefaultApi api = new com.example.client.api.DefaultApi();
+	public com.example.toshio.client.api.DefaultApi defaultApi() {
+		com.example.toshio.client.api.DefaultApi api = new com.example.toshio.client.api.DefaultApi();
 		api.getApiClient().setBasePath(clientBaseUrl);
 		return api;
 	}

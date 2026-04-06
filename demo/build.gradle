@@ -2,7 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.5'
 	id 'io.spring.dependency-management' version '1.1.7'
-	id 'org.openapi.generator' version '7.2.0'
+	id 'org.openapi.generator' version '7.5.0'
 }
 
 group = 'com.example.toshio'
@@ -44,9 +44,9 @@ openApiGenerate {
     generatorName = "java"
     inputSpec = openapiYaml
     outputDir = "$buildDir/generated"
-    apiPackage = "com.example.client.api"
-    modelPackage = "com.example.client.model"
-    invokerPackage = "com.example.client.invoker"
+    apiPackage = "com.example.toshio.client.api"
+    modelPackage = "com.example.toshio.client.model"
+    invokerPackage = "com.example.toshio.client.invoker"
     library = "resttemplate"
     configOptions = [
             dateLibrary: "java8",
@@ -68,7 +68,7 @@ tasks.named('compileJava') {
 
 tasks.named('openApiGenerate') {
     doLast {
-        def apiClientFile = file("$buildDir/generated/src/main/java/com/example/client/invoker/ApiClient.java")
+        def apiClientFile = file("$buildDir/generated/src/main/java/com/example/toshio/client/invoker/ApiClient.java")
         if (apiClientFile.exists()) {
             def text = apiClientFile.getText('UTF-8')
             text = text.replace("defaultHeaders.containsKey(name)", "defaultHeaders.containsHeader(name)")
@@ -85,4 +85,8 @@ tasks.named('processResources') {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named("clean") {
+    delete "$buildDir/generated"
 }

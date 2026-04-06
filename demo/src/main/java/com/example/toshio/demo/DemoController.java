@@ -1,10 +1,10 @@
 package com.example.toshio.demo;
 
-import com.example.client.api.DefaultApi;
-import com.example.client.model.EligibilityRequest;
-import com.example.client.model.EstimateRequest;
-import com.example.client.model.Product;
-import com.example.client.model.Plan;
+import com.example.toshio.client.api.DefaultApi;
+import com.example.toshio.client.model.EligibilityRequest;
+import com.example.toshio.client.model.EstimateRequest;
+import com.example.toshio.client.model.Product;
+import com.example.toshio.client.model.Plan;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
