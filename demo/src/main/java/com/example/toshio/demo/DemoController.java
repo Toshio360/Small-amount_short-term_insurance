@@ -30,45 +30,38 @@ public class DemoController {
     @GetMapping("/plan")
     public String selectPlan(@RequestParam String productId, Model model) {
         model.addAttribute("productId", productId);
-        model.addAttribute("productName", api.productsGet().stream()
-            .filter(p -> p.getProductId().equals(productId)).findFirst().map(Product::getName).orElse(""));
+        model.addAttribute("productName",
+                api.productsGet().stream().filter(p -> p.getProductId().equals(productId))
+                        .findFirst().map(Product::getName).orElse(""));
         model.addAttribute("plans", api.productsProductIdPlansGet(productId));
         return "plan-select";
     }
 
     @PostMapping("/estimate")
-    public String estimate(
-            @RequestParam String productId,
-            @RequestParam String planId,
-            @RequestParam int age,
-            @RequestParam int period,
-            Model model) {
+    public String estimate(@RequestParam String productId, @RequestParam String planId,
+            @RequestParam int age, @RequestParam int period, Model model) {
 
-        var estimateRequest = new EstimateRequest()
-                .productId(productId)
-                .planId(planId)
-                .age(age)
-                .period(period);
+        var estimateRequest =
+                new EstimateRequest().productId(productId).planId(planId).age(age).period(period);
 
         var result = api.estimatePost(estimateRequest);
 
         model.addAttribute("productId", productId);
         model.addAttribute("selectedPlanId", planId);
         model.addAttribute("age", age);
+        model.addAttribute("period", period);
         model.addAttribute("premium", result.getPremium());
         model.addAttribute("plans", api.productsProductIdPlansGet(productId));
-        model.addAttribute("productName", api.productsGet().stream()
-            .filter(p -> p.getProductId().equals(productId)).findFirst().map(Product::getName).orElse(""));
+        model.addAttribute("productName",
+                api.productsGet().stream().filter(p -> p.getProductId().equals(productId))
+                        .findFirst().map(Product::getName).orElse(""));
 
         return "plan-select";
     }
 
     @GetMapping("/eligibility")
-    public String eligibilityForm(
-            @RequestParam String productId,
-            @RequestParam String planId,
-            @RequestParam int age,
-            Model model) {
+    public String eligibilityForm(@RequestParam String productId, @RequestParam String planId,
+            @RequestParam int age, Model model) {
 
         model.addAttribute("productId", productId);
         model.addAttribute("planId", planId);
@@ -78,17 +71,11 @@ public class DemoController {
     }
 
     @PostMapping("/eligibility")
-    public String eligibility(
-            @RequestParam String productId,
-            @RequestParam String planId,
-            @RequestParam int age,
-            @RequestParam String prefecture,
-            @RequestParam boolean hasMedicalHistory,
-            Model model) {
+    public String eligibility(@RequestParam String productId, @RequestParam String planId,
+            @RequestParam int age, @RequestParam String prefecture,
+            @RequestParam boolean hasMedicalHistory, Model model) {
 
-        var eligibilityRequest = new EligibilityRequest()
-                .age(age)
-                .prefecture(prefecture)
+        var eligibilityRequest = new EligibilityRequest().age(age).prefecture(prefecture)
                 .hasMedicalHistory(hasMedicalHistory);
 
         var result = api.eligibilityPost(eligibilityRequest);
