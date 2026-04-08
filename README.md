@@ -39,3 +39,18 @@ npm install --save-dev @stoplight/prism-cli
 ```cmd
 npx prism mock src/main/resources/static/openapi/contract-api.yaml --port 8089 --host 0.0.0.0
 ```
+
+## 🧩 共通レイアウトの使い方
+
+本プロジェクトでは Thymeleaf の標準レイアウト機能を使用しています。
+
+### レイアウトの基本構造
+- `common/layout.html` に共通レイアウトを定義
+- 各画面は以下のようにレイアウトを継承します：
+
+```html
+<html th:replace="~{common/layout :: navbar}">
+    <div th:fragment="content">
+        <!-- 画面固有の内容 -->
+    </div>
+</html>
