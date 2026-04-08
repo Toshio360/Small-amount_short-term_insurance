@@ -54,3 +54,10 @@ npx prism mock src/main/resources/static/openapi/contract-api.yaml --port 8089 -
         <!-- 画面固有の内容 -->
     </div>
 </html>
+```
+- 各画面の th:fragment="content" を宣言した要素で`common/layout.html` の下記箇所のdiv要素が置き換わります。
+```html
+    <div class="container" th:repLace="~{::content}">
+        ここがコンテンツエリアです
+    </div>
+```
