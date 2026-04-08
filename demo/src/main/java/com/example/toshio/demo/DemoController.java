@@ -4,6 +4,7 @@ import com.example.toshio.client.api.DefaultApi;
 import com.example.toshio.client.model.EligibilityRequest;
 import com.example.toshio.client.model.EstimateRequest;
 import com.example.toshio.client.model.Product;
+import com.example.toshio.demo.enums.ApplicationSteps;
 import com.example.toshio.client.model.Plan;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.thymeleaf.TemplateEngine;
 
 @Controller
 @RequestMapping("/contract")
@@ -24,6 +26,8 @@ public class DemoController {
     @GetMapping("/product")
     public String selectProduct(Model model) {
         model.addAttribute("products", api.productsGet());
+        model.addAttribute("step", ApplicationSteps.PRODUCT);
+        model.addAttribute("steps", ApplicationSteps.values());
         return "product-select";
     }
 
@@ -34,6 +38,8 @@ public class DemoController {
                 api.productsGet().stream().filter(p -> p.getProductId().equals(productId))
                         .findFirst().map(Product::getName).orElse(""));
         model.addAttribute("plans", api.productsProductIdPlansGet(productId));
+        model.addAttribute("step", ApplicationSteps.PLAN);
+        model.addAttribute("steps", ApplicationSteps.values());
         return "plan-select";
     }
 
@@ -41,13 +47,12 @@ public class DemoController {
     public String estimate(@RequestParam String productId, @RequestParam String planId,
             @RequestParam int age, @RequestParam int period, Model model) {
 
-        var estimateRequest =
-                new EstimateRequest().productId(productId).planId(planId).age(age).period(period);
+        var estimateRequest = new EstimateRequest().productId(productId).planId(planId).age(age).period(period);
 
         var result = api.estimatePost(estimateRequest);
 
         model.addAttribute("productId", productId);
-        model.addAttribute("selectedPlanId", planId);
+        model.addAttribute("planId", planId);
         model.addAttribute("age", age);
         model.addAttribute("period", period);
         model.addAttribute("premium", result.getPremium());
@@ -55,6 +60,8 @@ public class DemoController {
         model.addAttribute("productName",
                 api.productsGet().stream().filter(p -> p.getProductId().equals(productId))
                         .findFirst().map(Product::getName).orElse(""));
+        model.addAttribute("step", ApplicationSteps.PLAN);
+        model.addAttribute("steps", ApplicationSteps.values());
 
         return "plan-select";
     }
@@ -66,7 +73,11 @@ public class DemoController {
         model.addAttribute("productId", productId);
         model.addAttribute("planId", planId);
         model.addAttribute("age", age);
+        api.productsGet().stream().filter(p -> p.getProductId().equals(productId))
+                .findFirst().map(Product::getName).orElse("");
 
+        model.addAttribute("step", ApplicationSteps.ELIGIBILITY);
+        model.addAttribute("steps", ApplicationSteps.values());
         return "eligibility";
     }
 
@@ -79,10 +90,13 @@ public class DemoController {
                 .hasMedicalHistory(hasMedicalHistory);
 
         var result = api.eligibilityPost(eligibilityRequest);
-
+        model.addAttribute("productId", productId);
+        model.addAttribute("planId", planId);
         model.addAttribute("eligible", result.getEligible());
         model.addAttribute("reason", result.getReason());
 
+        model.addAttribute("step", ApplicationSteps.ELIGIBILITY);
+        model.addAttribute("steps", ApplicationSteps.values());
         return "eligibility";
     }
 }

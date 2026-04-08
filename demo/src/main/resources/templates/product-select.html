@@ -1,25 +1,24 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>商品選択</title>
-</head>
-<body>
-<h2>少額短期保険 新規契約</h2>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: navbar}">
 
-<form action="/contract/plan" method="get">
-    <h3>商品を選択してください</h3>
+<div th:fragment="content">
 
-    <div th:each="product : ${products}">
-        <label>
-            <input type="radio" name="productId" th:value="${product.productId}" required>
-            <span th:text="${product.name}"></span>
+<h2 class="mb-4">少額短期保険 新規契約</h2>
+<form action="/contract/plan" method="get" class="card p-4 shadow-sm">
+
+    <h4 class="mb-3">商品を選択してください</h4>
+
+    <div class="list-group mb-3" th:each="product : ${products}">
+        <label class="list-group-item">
+            <input type="radio" name="productId" th:value="${product.productId}" class="form-check-input me-2" required>
+            <span class="fw-bold" th:text="${product.name}"></span>
+            <div class="small text-muted" th:text="${product.description}"></div>
         </label>
-        <p th:text="${product.description}"></p>
-        <hr>
     </div>
 
-    <button type="submit">次へ</button>
-</form>
+    <button type="submit" class="btn btn-primary w-100">次へ</button>
 
-</body>
+</form>
+</div>
+
 </html>
