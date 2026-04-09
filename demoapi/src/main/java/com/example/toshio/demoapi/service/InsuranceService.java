@@ -1,6 +1,8 @@
 package com.example.toshio.demoapi.service;
 
 import com.example.toshio.demoapi.model.*;
+
+import org.jspecify.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -58,5 +60,14 @@ public class InsuranceService {
             default:
                 return List.of();
         }
+    }
+
+    public @Nullable ApplicationResponse applyContract(ApplicationRequest request) {
+        // ここでは簡単のため、申込IDを固定値で返す
+        ApplicationResponse res = new ApplicationResponse();
+        res.setApplicationId("app_123456");
+        res.setStatus("申込受付");
+        res.setMessage("申込が正常に受け付けられました");
+        return res;
     }
 }

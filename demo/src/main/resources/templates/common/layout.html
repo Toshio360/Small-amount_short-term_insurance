@@ -1,9 +1,15 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:fragment="navbar">
+<html xmlns:th="http://www.thymeleaf.org" th:fragment="layout">
 
 <head>
     <meta charset="UTF-8">
-    <!-- <title th:replace="${title}">Small Insurance</title> -->
+    <!--/*-->
+    <title>
+        静的に開いたときだけ表示されます！
+    </title>
+    <!--*/-->
+    <meta th:replace="~{::title}">
+    </meta>
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
@@ -17,25 +23,34 @@
         </div>
     </nav>
 
-    <div>
-        <!-- 進捗タブ -->
-        <ul class="nav nav-tabs mb-4">
+    <!-- ステップナビ -->
+    <ul class="nav nav-tabs mb-4" th:remove="all-but-first">
+        <li class="nav-item" th:each="s : ${steps}">
+            <a class="nav-link" th:text="${s.displayName}" th:classappend="${(step.order == s.order) ? 'active' :
+                               (step.order > s.order) ? '' : 'disabled'}"
+                th:href="${step.order > s.order} ? @{${s.path}(productId=${productId}, planId=${planId})} : null">
+                1. 商品選択
+            </a>
+        </li>
+        <il class="nav-item"> </il>
+        <a class="nav-link active">
+            2. プラン選択
+        </a>
+        </il>
+        <il class="nav-item">
+            <a class="nav-link disabled">
+                3. 被保険者情報入力
+            </a>
+        </il>
 
-            <li class="nav-item" th:each="s : ${steps}">
-                <a class="nav-link" th:text="${s.displayName}"
-                    th:classappend="${(step.order == s.order) ? 'active': (step.order > s.order) ? '' : 'disabled'}"
-                    th:href="@{${s.path + (step.order > s.order ? '?productId=' + productId + '&planId=' + planId : '')}}">
-                </a>
-            </li>
+    </ul>
 
-        </ul>
-        <div class="container" th:repLace="~{::content}">
-            ここがコンテンツエリアです
-        </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous">
-            </script>
+    <!-- ★ 子テンプレートの content がここに入る -->
+    <div class="container" th:repLace="~{::content}">
+        ここがコンテンツエリアです
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 

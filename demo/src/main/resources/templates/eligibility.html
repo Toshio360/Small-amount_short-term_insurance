@@ -1,68 +1,74 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: navbar}">
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout}">
 
-<div th:fragment="content">
+<head>
+    <title>申込可否判定</title>
+</head>
 
-    <h2 class="mb-4">申込可否判定</h2>
+<body>
+    <div th:fragment="content">
 
-    <form action="/contract/eligibility" method="post" class="card p-4 shadow-sm">
+        <h2 class="mb-4">申込可否判定</h2>
 
-        <input type="hidden" name="productId" th:value="${productId}">
-        <input type="hidden" name="planId" th:value="${planId}">
-        <input type="hidden" name="age" th:value="${age}">
+        <form action="/contract/eligibility" method="post" class="card p-4 shadow-sm">
 
-        <!-- 居住地 -->
-        <h4 class="mb-3">居住地（都道府県）</h4>
-        <select name="prefecture" class="form-select mb-3" required>
-            <option value="">選択してください</option>
-            <option>東京都</option>
-            <option>神奈川県</option>
-            <option>千葉県</option>
-            <option>埼玉県</option>
-        </select>
+            <input type="hidden" name="productId" th:value="${productId}">
+            <input type="hidden" name="planId" th:value="${planId}">
+            <input type="hidden" name="age" th:value="${age}">
 
-        <!-- 既往症 -->
-        <h4 class="mb-3">既往症</h4>
-        <div class="form-check">
-            <input class="form-check-input" type="radio" name="hasMedicalHistory" value="false" required>
-            <label class="form-check-label">なし</label>
-        </div>
-        <div class="form-check mb-3">
-            <input class="form-check-input" type="radio" name="hasMedicalHistory" value="true">
-            <label class="form-check-label">あり</label>
-        </div>
+            <!-- 居住地 -->
+            <h4 class="mb-3">居住地（都道府県）</h4>
+            <select name="prefecture" class="form-select mb-3" required>
+                <option value="">選択してください</option>
+                <option>東京都</option>
+                <option>神奈川県</option>
+                <option>千葉県</option>
+                <option>埼玉県</option>
+            </select>
 
-        <button type="submit" class="btn btn-primary w-100">判定する</button>
+            <!-- 既往症 -->
+            <h4 class="mb-3">既往症</h4>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="hasMedicalHistory" value="false" required>
+                <label class="form-check-label">なし</label>
+            </div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="radio" name="hasMedicalHistory" value="true">
+                <label class="form-check-label">あり</label>
+            </div>
 
-    </form>
+            <button type="submit" class="btn btn-primary w-100">判定する</button>
 
-    <!-- 判定結果 -->
-    <div th:if="${eligible != null}" class="mt-4">
+        </form>
 
-        <div class="alert alert-info shadow-sm">
-            <h5 class="alert-heading">判定結果</h5>
+        <!-- 判定結果 -->
+        <div th:if="${eligible != null}" class="mt-4">
 
-            <p th:if="${eligible}" class="fw-bold text-success">
-                申込可能です
-            </p>
+            <div class="alert alert-info shadow-sm">
+                <h5 class="alert-heading">判定結果</h5>
 
-            <p th:if="${!eligible}" class="fw-bold text-danger" th:text="${reason}">
-            </p>
-        </div>
+                <p th:if="${eligible}" class="fw-bold text-success">
+                    申込可能です
+                </p>
 
-        <div th:if="${eligible}">
-            <form action="/contract/policyholder" method="get">
-                <input type="hidden" name="productId" th:value="${productId}">
-                <input type="hidden" name="planId" th:value="${planId}">
-                <input type="hidden" name="age" th:value="${age}">
-                <button type="submit" class="btn btn-success w-100">
-                    契約者情報入力へ
-                </button>
-            </form>
+                <p th:if="${!eligible}" class="fw-bold text-danger" th:text="${reason}">
+                </p>
+            </div>
+
+            <div th:if="${eligible}">
+                <form action="/contract/policyholder" method="get">
+                    <input type="hidden" name="productId" th:value="${productId}">
+                    <input type="hidden" name="planId" th:value="${planId}">
+                    <input type="hidden" name="age" th:value="${age}">
+                    <button type="submit" class="btn btn-success w-100">
+                        契約者情報入力へ
+                    </button>
+                </form>
+            </div>
+
         </div>
 
     </div>
-
-</div>
+</body>
 
 </html>

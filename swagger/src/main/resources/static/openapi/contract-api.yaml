@@ -12,14 +12,14 @@ paths:
       summary: 商品一覧取得
       description: 販売中の少額短期保険商品の一覧を取得する
       responses:
-        '200':
+        "200":
           description: 商品一覧
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Product'
+                  $ref: "#/components/schemas/Product"
               example:
                 - productId: "product_001"
                   name: "医療保障プラス"
@@ -41,14 +41,14 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: プラン一覧
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Plan'
+                  $ref: "#/components/schemas/Plan"
               example:
                 - planId: "plan_basic"
                   name: "基本プラン"
@@ -68,14 +68,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EstimateRequest'
+              $ref: "#/components/schemas/EstimateRequest"
       responses:
-        '200':
+        "200":
           description: 見積結果
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EstimateResponse'
+                $ref: "#/components/schemas/EstimateResponse"
 
   /eligibility:
     post:
@@ -86,14 +86,32 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/EligibilityRequest'
+              $ref: "#/components/schemas/EligibilityRequest"
       responses:
-        '200':
+        "200":
           description: 判定結果
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/EligibilityResponse'
+                $ref: "#/components/schemas/EligibilityResponse"
+
+  /application:
+    post:
+      summary: 申込
+      description: 保険契約の申込を行う
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationRequest"
+      responses:
+        "200":
+          description: 申込結果
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationResponse"
 
 components:
   schemas:
@@ -205,3 +223,85 @@ components:
       example:
         eligible: true
         reason: "申込要件を満たしています"
+
+    ApplicationRequest:
+      description: 申込リクエスト
+      type: object
+      properties:
+        productId:
+          type: string
+        planId:
+          type: string
+        policyHolder:
+          $ref: "#/components/schemas/Person"
+        insured:
+          $ref: "#/components/schemas/InsuredPerson"
+      required:
+        - productId
+        - planId
+        - policyHolder
+        - insured
+      example:
+        productId: "product_001"
+        planId: "plan_basic"
+        policyHolder:
+          name: "山田太郎"
+          address: "東京都新宿区1-2-3"
+          birthDate: "1990-01-01"
+          phone: "090-1234-5678"
+        insured:
+          name: "山田花子"
+          address: "東京都新宿区1-2-3"
+          birthDate: "1995-05-05"
+          phone: "090-9876-5432"
+          relationship: "SPOUSE"
+
+    Person:
+      description: 人物情報
+      type: object
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+        birthDate:
+          type: string
+          format: date
+        phone:
+          type: string
+      example:
+        name: "山田太郎"
+        address: "東京都新宿区1-2-3"
+        birthDate: "1990-01-01"
+        phone: "090-1234-5678"
+    
+    InsuredPerson:
+      description: 被保険者情報
+      allOf:
+        - $ref: "#/components/schemas/Person"
+        - type: object
+          properties:
+            relationship:
+              type: string
+              enum: [SELF, SPOUSE, CHILD]
+      example:
+        name: "山田花子"
+        address: "東京都新宿区1-2-3"
+        birthDate: "1995-05-05"
+        phone: "090-9876-5432"
+        relationship: "SPOUSE"
+    
+    ApplicationResponse:
+      description: 申込結果
+      type: object
+      properties:
+        applicationId:
+          type: string
+        status:
+          type: string
+        message:
+          type: string
+      example:
+        applicationId: "app_123456"
+        status: "申込受付"
+        message: "申込が正常に受け付けられました"

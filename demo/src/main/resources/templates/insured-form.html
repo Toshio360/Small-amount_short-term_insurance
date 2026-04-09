@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout}">
+
+<head>
+    <title>被保険者情報入力</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+
+        <h3 class="mb-4">被保険者情報入力</h3>
+
+        <form th:action="@{/contract/insured}" method="post" th:object="${insured}" class="card p-4 shadow-sm">
+
+            <!-- 氏名 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">氏名</label>
+                <input type="text" th:field="*{name}" class="form-control" placeholder="例：山田 花子">
+            </div>
+
+            <!-- 生年月日 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">生年月日</label>
+                <input type="date" th:field="*{birthDate}" class="form-control">
+            </div>
+
+            <!-- 続柄 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">続柄</label>
+                <select th:field="*{relationship}" class="form-select">
+                    <option th:each="r : ${T(com.example.toshio.demo.enums.RelationShip).values()}" th:value="${r}"
+                        th:text="${r.label}">
+                    </option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">次へ</button>
+        </form>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout}">
+
+
+<head>
+    <title>契約者情報入力</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+
+        <h3 class="mb-4">契約者情報入力</h3>
+
+        <form th:action="@{/contract/policyholder}" method="post" th:object="${policyHolder}" class="card p-4 shadow-sm">
+
+            <!-- 氏名 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">氏名</label>
+                <input type="text" th:field="*{name}" class="form-control" placeholder="例：山田 太郎">
+            </div>
+
+            <!-- 生年月日 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">生年月日</label>
+                <input type="date" th:field="*{birthDate}" class="form-control">
+            </div>
+
+            <!-- 住所 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">住所</label>
+                <input type="text" th:field="*{address}" class="form-control" placeholder="例：東京都新宿区...">
+            </div>
+
+            <!-- 電話番号 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">電話番号</label>
+                <input type="text" th:field="*{phone}" class="form-control" placeholder="例：090-1234-5678">
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">次へ</button>
+        </form>
+    </div>
+</body>
+
+</html>

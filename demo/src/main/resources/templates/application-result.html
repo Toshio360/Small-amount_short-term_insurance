@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{common/layout :: layout}">
+
+<head>
+    <title>申込完了</title>
+</head>
+
+<body>
+    <div th:fragment="content">
+        <h2 class="mb-4">申込完了</h2>
+        <div class="alert alert-success shadow-sm">
+            <h4 class="alert-heading">申込が完了しました</h4>
+            <p class="mb-1">申込ID：<span th:text="${applicationId}"></span></p>
+            <p class="mb-3">ステータス：<span th:text="${status}"></span></p>
+            <hr>
+            <p class="mb-0">ご利用ありがとうございました。</p>
+        </div>
+
+        <div class="mt-4">
+            <a href="/contract/policyholder" class="btn btn-primary">トップへ戻る</a>
+        </div>
+    </div>
+</body>
+
+</html>

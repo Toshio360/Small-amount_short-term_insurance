@@ -36,4 +36,9 @@ public class DefaultApiController implements DefaultApi {
     public ResponseEntity<List<Plan>> productsProductIdPlansGet(String productId) {
         return ResponseEntity.ok(insuranceService.getPlans(productId));
     }
+
+    @Override
+    public ResponseEntity<ApplicationResponse> applicationPost(ApplicationRequest request) {
+        return ResponseEntity.ok(insuranceService.applyContract(request));
+    }
 }
