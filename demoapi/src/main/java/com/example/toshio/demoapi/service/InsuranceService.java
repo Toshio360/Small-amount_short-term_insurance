@@ -70,4 +70,5 @@ public class InsuranceService {
         res.setMessage("申込が正常に受け付けられました");
         return res;
     }
+
 }

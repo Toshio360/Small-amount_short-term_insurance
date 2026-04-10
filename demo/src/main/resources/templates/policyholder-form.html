@@ -11,7 +11,8 @@
 
         <h3 class="mb-4">契約者情報入力</h3>
 
-        <form th:action="@{/contract/policyholder}" method="post" th:object="${policyHolder}" class="card p-4 shadow-sm">
+        <form th:action="@{/contract/policyholder}" method="post" th:object="${policyHolder}"
+            class="card p-4 shadow-sm">
 
             <!-- 氏名 -->
             <div class="mb-3">
@@ -22,7 +23,8 @@
             <!-- 生年月日 -->
             <div class="mb-3">
                 <label class="form-label fw-bold">生年月日</label>
-                <input type="date" th:field="*{birthDate}" class="form-control">
+                <input type="date" name="birthDate" th:value="${birthDate}" class="form-control"
+                    onclick="setDefaultBirthDate(this)">
             </div>
 
             <!-- 住所 -->

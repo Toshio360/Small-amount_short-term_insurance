@@ -45,17 +45,17 @@ openApiGenerate {
 sourceSets {
     main {
         java {
-            srcDir "$buildDir/generated/src/main/java"
+            srcDir("$buildDir/generated/src/main/java")
         }
     }
 }
-
 tasks.named('processResources') {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
 tasks.named('compileJava') {
     dependsOn tasks.named('openApiGenerate')
+    options.compilerArgs += ['-parameters']
 }
 
 tasks.named('test') {

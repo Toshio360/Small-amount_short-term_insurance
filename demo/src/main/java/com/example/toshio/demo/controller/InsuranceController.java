@@ -1,4 +1,4 @@
-package com.example.toshio.demo;
+package com.example.toshio.demo.controller;
 
 import com.example.toshio.client.api.DefaultApi;
 import com.example.toshio.client.model.EligibilityRequest;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Controller
 @RequestMapping("/contract")
 @SessionAttributes({"policyHolder", "insured", "products", "productId", "planId"})
-public class DemoController {
+public class InsuranceController {
     // -----------------------------
     // セッションに保持する初期値
     // -----------------------------
@@ -142,10 +142,12 @@ public class DemoController {
             @ModelAttribute("productId") String productId, @ModelAttribute("planId") String planId,
             @ModelAttribute("policyHolder") PolicyHolder policyHolder, Model model) {
         // ★ productId と planId が無ければ商品選択に戻す
-        if (Strings.isBlank(productId))
+        if (productId == null) {
             return "redirect:/contract/product";
-        if (Strings.isBlank(planId))
+        }
+        if (planId == null) {
             return "redirect:/contract/plan?productId=" + productId;
+        }
 
         model.addAttribute("age",
                 policyHolder.getBirthDate() != null
