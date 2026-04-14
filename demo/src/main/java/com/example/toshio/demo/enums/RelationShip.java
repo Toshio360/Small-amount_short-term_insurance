@@ -1,7 +1,5 @@
 package com.example.toshio.demo.enums;
 
-import com.example.toshio.client.model.InsuredPerson.RelationshipEnum;
-
 public enum RelationShip {
     SELF("本人", "SELF"),
     SPOUSE("配偶者", "SPOUSE"),

@@ -4,6 +4,21 @@ spring:
   output:
     ansi:
       enabled: always
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: my-client
+            client-secret: fUeqE0edmBoiE4jxMdrcaYCkiXJVH3P8
+            scope: openid,profile,email
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+        provider:
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/my-realm
+server:
+  port: 8088
 client:
   baseUrl: http://localhost:8089
 logging:
