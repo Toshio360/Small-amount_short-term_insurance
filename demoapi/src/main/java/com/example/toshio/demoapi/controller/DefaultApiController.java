@@ -41,4 +41,9 @@ public class DefaultApiController implements DefaultApi {
     public ResponseEntity<ApplicationResponse> applicationPost(ApplicationRequest request) {
         return ResponseEntity.ok(insuranceService.applyContract(request));
     }
+
+    @Override
+    public ResponseEntity<User> userUsernameGet(String username) {
+        return ResponseEntity.ok(insuranceService.getUser(username));
+    }
 }

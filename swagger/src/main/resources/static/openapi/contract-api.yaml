@@ -7,6 +7,23 @@ servers:
   - url: https://api.example.com/v1
 
 paths:
+  /user/{username}:
+    get:
+      summary: ユーザ情報取得
+      description: ログインユーザの基本情報を取得する
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: ユーザ情報
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
   /products:
     get:
       summary: 商品一覧取得
@@ -115,6 +132,20 @@ paths:
 
 components:
   schemas:
+    User:
+      description: ユーザ情報
+      type: object
+      properties:
+        userId:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+      example:
+        userId: "user_12345"
+        name: "山田太郎"
+        email: "a@b.c"
     Product:
       description: 少額短期保険商品
       type: object
@@ -305,3 +336,7 @@ components:
         applicationId: "app_123456"
         status: "申込受付"
         message: "申込が正常に受け付けられました"
+  securitySchemes:
+    openId:
+      type: openIdConnect
+      openIdConnectUrl: https://example.com/.well-known/openid-configuration

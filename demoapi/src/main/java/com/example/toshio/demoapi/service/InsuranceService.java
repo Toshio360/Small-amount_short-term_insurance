@@ -1,14 +1,18 @@
 package com.example.toshio.demoapi.service;
 
 import com.example.toshio.demoapi.model.*;
+import com.example.toshio.demoapi.repository.OperatorUserRepository;
 
 import org.jspecify.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class InsuranceService {
+    @Autowired
+    private OperatorUserRepository operatorUserRepository;
 
     public EligibilityResponse checkEligibility(EligibilityRequest req) {
         EligibilityResponse res = new EligibilityResponse();
@@ -69,6 +73,12 @@ public class InsuranceService {
         res.setStatus("申込受付");
         res.setMessage("申込が正常に受け付けられました");
         return res;
+    }
+
+    public @Nullable User getUser(String username) {
+        var operatorUser = operatorUserRepository.findByUsername(username);
+        return new User().userId(Long.toString(operatorUser.getId())).name(operatorUser.getDisplayName())
+                .email(operatorUser.getEmail());
     }
 
 }

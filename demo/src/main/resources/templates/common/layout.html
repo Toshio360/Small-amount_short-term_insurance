@@ -20,6 +20,10 @@
     <nav class="navbar navbar-dark bg-primary mb-4">
         <div class="container">
             <span class="navbar-brand">少額短期保険 申込システム</span>
+            <span class="navbar-text text-white fw-semibold" th:text="${#authentication.principal.opUser.name}"></span>
+            <form th:action="@{/logout}" method="post">
+                <button class="btn btn-outline-light btn-sm">ログアウト</button>
+            </form>
         </div>
     </nav>
 

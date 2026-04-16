@@ -8,8 +8,13 @@ import com.example.toshio.demo.dto.PolicyHolder;
 import com.example.toshio.demo.dto.ApplicationRequest;
 import com.example.toshio.demo.dto.InsuredPerson;
 import com.example.toshio.demo.enums.ApplicationSteps;
+import com.example.toshio.demo.security.CustomOidcUser;
+
+import lombok.extern.slf4j.Slf4j;
+
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
+@Slf4j
 @Controller
 @RequestMapping("/contract")
 @SessionAttributes({"policyHolder", "insured", "products", "productId", "planId"})
@@ -50,7 +56,14 @@ public class InsuranceController {
     private DefaultApi api; // OpenAPI generated client
 
     @GetMapping("/policyholder")
-    public String policyHolder(Model model) {
+    public String policyHolder(Model model,@AuthenticationPrincipal Object user) {
+        log.info("GET/policyholder - User: " + user.toString());
+        if(user instanceof CustomOidcUser) {
+            var customUser = (CustomOidcUser) user;
+            log.info("DB User: " + customUser.getOpUser().toString());
+        }else {
+            log.warn("Unexpected user type: " + user.getClass().getName());
+        }
         model.addAttribute("step", ApplicationSteps.POLICYHOLDER);
         model.addAttribute("steps", ApplicationSteps.values());
         return "policyholder-form";
@@ -58,7 +71,7 @@ public class InsuranceController {
 
     @PostMapping("/policyholder")
     public String postPolicyHolder(@ModelAttribute("policyHolder") PolicyHolder policyHolder,
-            Model model) {
+            Model model,@AuthenticationPrincipal Object user) {
         model.addAttribute("step", ApplicationSteps.INSURED);
         model.addAttribute("steps", ApplicationSteps.values());
         return "insured-form";
@@ -137,7 +150,7 @@ public class InsuranceController {
         return "plan-select";
     }
 
-    @GetMapping("/eligibility")
+    @GetMapping("/eligibility/check")
     public String eligibilityForm(@RequestParam(required = false) Integer age,
             @ModelAttribute("productId") String productId, @ModelAttribute("planId") String planId,
             @ModelAttribute("policyHolder") PolicyHolder policyHolder, Model model) {
@@ -161,7 +174,7 @@ public class InsuranceController {
         return "eligibility";
     }
 
-    @PostMapping("/eligibility")
+    @PostMapping("/eligibility/result")
     public String eligibility(@RequestParam int age, @RequestParam String prefecture,
             @RequestParam boolean hasMedicalHistory, @ModelAttribute("productId") String productId,
             @ModelAttribute("planId") String planId,
@@ -227,5 +240,10 @@ public class InsuranceController {
                 .address(src.getAddress()).birthDate(src.getBirthDate()).phone(src.getPhone())
                 .relationship(com.example.toshio.client.model.InsuredPerson.RelationshipEnum
                         .fromValue(src.getRelationship().getValue()));
+    }
+
+    @PostMapping("/logout")
+    public String logout() {
+        return "redirect:/";
     }
 }
