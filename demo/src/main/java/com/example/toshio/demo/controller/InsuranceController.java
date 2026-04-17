@@ -56,12 +56,12 @@ public class InsuranceController {
     private DefaultApi api; // OpenAPI generated client
 
     @GetMapping("/policyholder")
-    public String policyHolder(Model model,@AuthenticationPrincipal Object user) {
+    public String policyHolder(Model model, @AuthenticationPrincipal Object user) {
         log.info("GET/policyholder - User: " + user.toString());
-        if(user instanceof CustomOidcUser) {
+        if (user instanceof CustomOidcUser) {
             var customUser = (CustomOidcUser) user;
             log.info("DB User: " + customUser.getOpUser().toString());
-        }else {
+        } else {
             log.warn("Unexpected user type: " + user.getClass().getName());
         }
         model.addAttribute("step", ApplicationSteps.POLICYHOLDER);
@@ -71,7 +71,7 @@ public class InsuranceController {
 
     @PostMapping("/policyholder")
     public String postPolicyHolder(@ModelAttribute("policyHolder") PolicyHolder policyHolder,
-            Model model,@AuthenticationPrincipal Object user) {
+            Model model, @AuthenticationPrincipal Object user) {
         model.addAttribute("step", ApplicationSteps.INSURED);
         model.addAttribute("steps", ApplicationSteps.values());
         return "insured-form";
@@ -151,17 +151,19 @@ public class InsuranceController {
     }
 
     @GetMapping("/eligibility/check")
-    public String eligibilityForm(@RequestParam(required = false) Integer age,
-            @ModelAttribute("productId") String productId, @ModelAttribute("planId") String planId,
+    public String eligibilityForm(@RequestParam String productId, @RequestParam String planId,
+            @RequestParam Integer age, @RequestParam Integer period,
             @ModelAttribute("policyHolder") PolicyHolder policyHolder, Model model) {
         // ★ productId と planId が無ければ商品選択に戻す
-        if (productId == null) {
+        if (Strings.isBlank(productId)) {
             return "redirect:/contract/product";
         }
-        if (planId == null) {
+        if (Strings.isBlank(planId)) {
             return "redirect:/contract/plan?productId=" + productId;
         }
-
+        if (age == null) {
+            return "redirect:/contract/estimate?productId=" + productId + "&planId=" + planId;
+        }
         model.addAttribute("age",
                 policyHolder.getBirthDate() != null
                         ? policyHolder.getBirthDate().until(java.time.LocalDate.now()).getYears()

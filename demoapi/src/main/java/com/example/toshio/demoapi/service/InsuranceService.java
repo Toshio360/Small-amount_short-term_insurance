@@ -1,8 +1,23 @@
 package com.example.toshio.demoapi.service;
 
-import com.example.toshio.demoapi.model.*;
+import com.example.toshio.demoapi.entity.InsuranceApplicationEntity;
+import com.example.toshio.demoapi.entity.OperatorUserEntity;
+import com.example.toshio.demoapi.entity.ProductEntity;
+import com.example.toshio.demoapi.model.ApplicationRequest;
+import com.example.toshio.demoapi.model.ApplicationResponse;
+import com.example.toshio.demoapi.model.EligibilityRequest;
+import com.example.toshio.demoapi.model.EligibilityResponse;
+import com.example.toshio.demoapi.model.EstimateRequest;
+import com.example.toshio.demoapi.model.EstimateResponse;
+import com.example.toshio.demoapi.model.EstimateResponseBreakdown;
+import com.example.toshio.demoapi.model.Plan;
+import com.example.toshio.demoapi.model.Product;
+import com.example.toshio.demoapi.model.User;
+import com.example.toshio.demoapi.repository.InsuranceApplicationRepository;
 import com.example.toshio.demoapi.repository.OperatorUserRepository;
-
+import com.example.toshio.demoapi.repository.PersonRepository;
+import com.example.toshio.demoapi.repository.ProductPlanRepository;
+import com.example.toshio.demoapi.repository.ProductRepository;
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +28,14 @@ import java.util.List;
 public class InsuranceService {
     @Autowired
     private OperatorUserRepository operatorUserRepository;
+    @Autowired
+    private PersonRepository personRepository;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private ProductPlanRepository productPlanRepository;
+    @Autowired
+    private InsuranceApplicationRepository insuranceApplicationRepository;
 
     public EligibilityResponse checkEligibility(EligibilityRequest req) {
         EligibilityResponse res = new EligibilityResponse();
@@ -37,48 +60,28 @@ public class InsuranceService {
     }
 
     public List<Product> getProducts() {
-        Product p = new Product();
-        p.setProductId("product_001");
-        p.setName("医療保障プラス");
-        p.setDescription("入院・通院をカバーする少額短期保険（最長2年）");
-        return List.of(p,
-                new Product().productId("product_002").name("損害保険プラス")
-                        .description("自転車・バイク事故の損害をカバーする保険"),
-                new Product().productId("product_003").name("死亡保険").description("お葬式までをカバーします"));
+        return productRepository.findAll().stream().map(p -> new Product()
+                .productId(p.getProductId()).name(p.getName()).description(p.getDescription()))
+                .toList();
     }
 
     public List<Plan> getPlans(String productId) {
-        Plan plan = new Plan().planId("plan_basic").name("基本プラン").coverageAmount(1_000_000)
-                .basePremium(5000);
-        Plan plan2 = new Plan().planId("plan_standard").name("スタンダードプラン").coverageAmount(5_000_000)
-                .basePremium(15000);
-        Plan plan3 = new Plan().planId("plan_premium").name("プレミアムプラン").coverageAmount(10_000_000)
-                .basePremium(30000);
-        switch (productId) {
-            case "product_001":
-                return List.of(plan, plan2, plan3);
-            case "product_002":
-                return List.of(plan2, plan3);
-            case "product_003":
-                return List.of(plan3);
-            default:
-                return List.of();
-        }
+        return productPlanRepository.findByProduct_ProductId(productId).stream().map(pp -> {
+            var plan = pp.getPlan();
+            return new Plan().planId(plan.getPlanId()).name(plan.getName())
+                    .coverageAmount(plan.getCoverageAmount()).basePremium(plan.getBasePremium());
+        }).toList();
     }
 
     public @Nullable ApplicationResponse applyContract(ApplicationRequest request) {
-        // ここでは簡単のため、申込IDを固定値で返す
-        ApplicationResponse res = new ApplicationResponse();
-        res.setApplicationId("app_123456");
-        res.setStatus("申込受付");
-        res.setMessage("申込が正常に受け付けられました");
-        return res;
+        return new ApplicationResponse().applicationId("APP-1234567890").status("ACCEPTED")
+                .message("申込を受け付けました");
     }
 
     public @Nullable User getUser(String username) {
         var operatorUser = operatorUserRepository.findByUsername(username);
-        return new User().userId(Long.toString(operatorUser.getId())).name(operatorUser.getDisplayName())
-                .email(operatorUser.getEmail());
+        return new User().userId(Long.toString(operatorUser.getId()))
+                .name(operatorUser.getDisplayName()).email(operatorUser.getEmail());
     }
 
 }

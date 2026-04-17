@@ -47,10 +47,11 @@
                 <p>保険料：<span th:text="${premium}"></span> 円 / 月</p>
             </div>
 
-            <form action="/contract/eligibility" method="get">
+            <form action="/contract/eligibility/check" method="get">
                 <input type="hidden" name="productId" th:value="${productId}">
                 <input type="hidden" name="planId" th:value="${planId}">
                 <input type="hidden" name="age" th:value="${age}">
+                <input type="hidden" name="period" th:value="${period}">
                 <button type="submit" class="btn btn-success w-100">申込可否判定へ</button>
             </form>
         </div>
