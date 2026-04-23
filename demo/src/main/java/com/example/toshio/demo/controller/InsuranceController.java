@@ -22,12 +22,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 @Slf4j
 @Controller
 @RequestMapping("/contract")
-@SessionAttributes({"policyHolder", "insured", "products", "productId", "planId"})
+@SessionAttributes({ "policyHolder", "insured", "products", "productId", "planId" , "applicationRequest" })
 public class InsuranceController {
     // -----------------------------
     // セッションに保持する初期値
@@ -50,6 +51,10 @@ public class InsuranceController {
     @ModelAttribute("insured")
     public InsuredPerson insured() {
         return new InsuredPerson();
+    }
+    @ModelAttribute("applicationRequest")
+    public ApplicationRequest applicationRequest() {
+        return new ApplicationRequest();
     }
 
     @Autowired
@@ -118,19 +123,22 @@ public class InsuranceController {
     }
 
     @GetMapping("/estimate")
-    public String estimate(@ModelAttribute("productId") String productId,
-            @RequestParam String planId, @ModelAttribute("planId") String sessionPlanId,
-            @RequestParam int age, @RequestParam int period, Model model) {
+    public String estimate(
+            @RequestParam("productId") String productId,
+            @RequestParam("planId") String planId,
+            @RequestParam("age") int age,
+            @RequestParam("period") int period,
+            Model model) {
 
         if (productId == null)
             return "redirect:/contract/product";
-        if (planId == null && sessionPlanId == null)
+        if (planId == null)
             return "redirect:/contract/plan";
-        if (Strings.isNotBlank(planId) && !planId.equals(sessionPlanId))
+        if (Strings.isNotBlank(planId))
             model.addAttribute("planId", planId);
 
         var estimateRequest = new EstimateRequest().productId(productId)
-                .planId(planId != null ? planId : sessionPlanId).age(age).period(period);
+                .planId(planId != null ? planId : null).age(age).period(period);
 
         var result = api.estimatePost(estimateRequest);
 
@@ -142,7 +150,7 @@ public class InsuranceController {
         model.addAttribute("productName",
                 api.productsGet().stream().filter(p -> p.getProductId().equals(productId))
                         .findFirst().map(Product::getName).orElse(""));
-        model.addAttribute("planId", Strings.isNotBlank(planId) ? planId : sessionPlanId);
+        model.addAttribute("planId", planId);
 
         model.addAttribute("step", ApplicationSteps.PLAN);
         model.addAttribute("steps", ApplicationSteps.values());
@@ -151,8 +159,8 @@ public class InsuranceController {
     }
 
     @GetMapping("/eligibility/check")
-    public String eligibilityForm(@RequestParam String productId, @RequestParam String planId,
-            @RequestParam Integer age, @RequestParam Integer period,
+    public String eligibilityForm(@RequestParam("productId") String productId, @RequestParam("planId") String planId,
+            @RequestParam("age") Integer age, @RequestParam("period") Integer period,
             @ModelAttribute("policyHolder") PolicyHolder policyHolder, Model model) {
         // ★ productId と planId が無ければ商品選択に戻す
         if (Strings.isBlank(productId)) {
@@ -176,9 +184,9 @@ public class InsuranceController {
         return "eligibility";
     }
 
-    @PostMapping("/eligibility/result")
-    public String eligibility(@RequestParam int age, @RequestParam String prefecture,
-            @RequestParam boolean hasMedicalHistory, @ModelAttribute("productId") String productId,
+    @GetMapping("/eligibility/result")
+    public String eligibility(@RequestParam("age") int age, @RequestParam("prefecture") String prefecture,
+            @RequestParam("hasMedicalHistory") boolean hasMedicalHistory, @ModelAttribute("productId") String productId,
             @ModelAttribute("planId") String planId,
             @ModelAttribute("applicationRequest") ApplicationRequest applicationRequest,
             @ModelAttribute("policyHolder") PolicyHolder policyHolder,
@@ -196,40 +204,33 @@ public class InsuranceController {
         applicationRequest.setPolicyHolder(policyHolder);
         applicationRequest.setInsured(insured);
 
-        model.addAttribute("step", ApplicationSteps.CONFIRM);
-        model.addAttribute("steps", ApplicationSteps.values());
-        return "eligibility";
-    }
-
-    @GetMapping("application-confirm")
-    public String getMethodName(
-            @ModelAttribute("applicationRequest") ApplicationRequest applicationRequest,
-            Model model) {
-        if (applicationRequest.getEligible() == null) {
-            return "redirect:/contract/eligibility?productId=" + applicationRequest.getProductId()
-                    + "&planId=" + applicationRequest.getPlanId() + "&age="
-                    + applicationRequest.getInsured().getBirthDate()
-                            .until(java.time.LocalDate.now()).getYears();
-        }
         model.addAttribute("applicationRequest", applicationRequest);
         model.addAttribute("step", ApplicationSteps.CONFIRM);
         model.addAttribute("steps", ApplicationSteps.values());
         return "application-confirm";
     }
 
-    @PostMapping("application-confirm")
+    @PostMapping("/application")
     public String completeApplication(
-            @ModelAttribute("applicationRequest") ApplicationRequest applicationRequest,
-            Model model) {
+            @SessionAttribute("applicationRequest") ApplicationRequest applicationRequest,@SessionAttribute("insured") InsuredPerson insured,
+            @AuthenticationPrincipal CustomOidcUser user,Model model) {
+        if (applicationRequest.getEligible() == null) {
+            return "redirect:/contract/eligibility/check?productId=" + applicationRequest.getProductId()
+                    + "&planId=" + applicationRequest.getPlanId()
+                    + "&age="
+                    + insured.getBirthDate()
+                            .until(java.time.LocalDate.now()).getYears();
+        }
         var req = new com.example.toshio.client.model.ApplicationRequest()
                 .productId(applicationRequest.getProductId()).planId(applicationRequest.getPlanId())
                 .policyHolder(convertPerson(applicationRequest.getPolicyHolder()))
-                .insured(convertInsured(applicationRequest.getInsured()));
+                .insured(convertInsured(applicationRequest.getInsured())).operatorUserId(user.getOpUser().getUserId());
+
         var response = api.applicationPost(req);
         model.addAttribute("applicationId", response.getApplicationId());
         model.addAttribute("step", ApplicationSteps.COMPLETE);
         model.addAttribute("steps", ApplicationSteps.values());
-        return "application-complete";
+        return "application-result";
     }
 
     private com.example.toshio.client.model.Person convertPerson(PolicyHolder src) {

@@ -10,11 +10,9 @@
         <h2>申込内容確認</h2>
 
         <form th:action="@{/contract/application}" method="post" th:object="${applicationRequest}">
-            <input type="hidden" th:field="*{policyHolderId}" th:value="${policyHolderId}" />
-            <input type="hidden" th:field="*{insuredId}" th:value="${insuredId}" />
 
-            商品ID: <input type="text" th:field="*{productId}" /><br />
-            プランID: <input type="text" th:field="*{planId}" /><br />
+            商品ID: <input type="text" th:field="*{productId}" disabled /><br />
+            プランID: <input type="text" th:field="*{planId}" disabled /><br />
 
             <button type="submit">申込する</button>
         </form>

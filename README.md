@@ -25,7 +25,7 @@ Small-amount_short-term_insurance>cd .\demo && .\gradlew bootRun
 ```
 5. 開発用初期データを投入する
 ```sql
-insert into operator_user values (1,'大橋オペレータ','b@c.d','my-realm-user');
+insert into operator_user values ('9e20cb50-61ec-4363-ad15-c66d78594d94','大橋オペレータ','b@c.d','my-realm-user');
 
 INSERT INTO product (product_id, name, description) VALUES
 ('P001', '入院安心ミニ医療保険', '入院・手術を中心にカバーする少額短期医療保険'),

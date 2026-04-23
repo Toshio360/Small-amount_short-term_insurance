@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.example.toshio.demoapi.entity.OperatorUserEntity;
 
 @Repository
-public interface OperatorUserRepository extends JpaRepository<OperatorUserEntity, Long> {
+public interface OperatorUserRepository extends JpaRepository<OperatorUserEntity, String> {
     OperatorUserEntity findByUsername(String username);
 }

@@ -267,14 +267,18 @@ components:
           $ref: "#/components/schemas/Person"
         insured:
           $ref: "#/components/schemas/InsuredPerson"
+        operatorUserId:
+          type: string
       required:
         - productId
         - planId
         - policyHolder
         - insured
+        - operatorUserId
       example:
         productId: "product_001"
         planId: "plan_basic"
+        operatorUserId: "user_12345"
         policyHolder:
           name: "山田太郎"
           address: "東京都新宿区1-2-3"
