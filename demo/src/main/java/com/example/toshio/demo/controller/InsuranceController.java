@@ -3,6 +3,8 @@ package com.example.toshio.demo.controller;
 import com.example.toshio.client.api.DefaultApi;
 import com.example.toshio.client.model.EligibilityRequest;
 import com.example.toshio.client.model.EstimateRequest;
+import com.example.toshio.client.model.InsuranceApplicationRequest;
+import com.example.toshio.client.model.Person;
 import com.example.toshio.client.model.Product;
 import com.example.toshio.demo.dto.PolicyHolder;
 import com.example.toshio.demo.dto.ApplicationRequest;
@@ -28,7 +30,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 @Slf4j
 @Controller
 @RequestMapping("/contract")
-@SessionAttributes({ "policyHolder", "insured", "products", "productId", "planId" , "applicationRequest" })
+@SessionAttributes({"policyHolder", "insured", "products", "productId", "planId",
+        "applicationRequest"})
 public class InsuranceController {
     // -----------------------------
     // セッションに保持する初期値
@@ -52,6 +55,7 @@ public class InsuranceController {
     public InsuredPerson insured() {
         return new InsuredPerson();
     }
+
     @ModelAttribute("applicationRequest")
     public ApplicationRequest applicationRequest() {
         return new ApplicationRequest();
@@ -123,12 +127,9 @@ public class InsuranceController {
     }
 
     @GetMapping("/estimate")
-    public String estimate(
-            @RequestParam("productId") String productId,
-            @RequestParam("planId") String planId,
-            @RequestParam("age") int age,
-            @RequestParam("period") int period,
-            Model model) {
+    public String estimate(@RequestParam("productId") String productId,
+            @RequestParam("planId") String planId, @RequestParam("age") int age,
+            @RequestParam("period") int period, Model model) {
 
         if (productId == null)
             return "redirect:/contract/product";
@@ -159,8 +160,9 @@ public class InsuranceController {
     }
 
     @GetMapping("/eligibility/check")
-    public String eligibilityForm(@RequestParam("productId") String productId, @RequestParam("planId") String planId,
-            @RequestParam("age") Integer age, @RequestParam("period") Integer period,
+    public String eligibilityForm(@RequestParam("productId") String productId,
+            @RequestParam("planId") String planId, @RequestParam("age") Integer age,
+            @RequestParam("period") Integer period,
             @ModelAttribute("policyHolder") PolicyHolder policyHolder, Model model) {
         // ★ productId と planId が無ければ商品選択に戻す
         if (Strings.isBlank(productId)) {
@@ -185,9 +187,10 @@ public class InsuranceController {
     }
 
     @GetMapping("/eligibility/result")
-    public String eligibility(@RequestParam("age") int age, @RequestParam("prefecture") String prefecture,
-            @RequestParam("hasMedicalHistory") boolean hasMedicalHistory, @ModelAttribute("productId") String productId,
-            @ModelAttribute("planId") String planId,
+    public String eligibility(@RequestParam("age") int age,
+            @RequestParam("prefecture") String prefecture,
+            @RequestParam("hasMedicalHistory") boolean hasMedicalHistory,
+            @ModelAttribute("productId") String productId, @ModelAttribute("planId") String planId,
             @ModelAttribute("applicationRequest") ApplicationRequest applicationRequest,
             @ModelAttribute("policyHolder") PolicyHolder policyHolder,
             @ModelAttribute("insured") InsuredPerson insured, Model model) {
@@ -212,30 +215,31 @@ public class InsuranceController {
 
     @PostMapping("/application")
     public String completeApplication(
-            @SessionAttribute("applicationRequest") ApplicationRequest applicationRequest,@SessionAttribute("insured") InsuredPerson insured,
-            @AuthenticationPrincipal CustomOidcUser user,Model model) {
+            @SessionAttribute("applicationRequest") ApplicationRequest applicationRequest,
+            @SessionAttribute("insured") InsuredPerson insured,
+            @AuthenticationPrincipal CustomOidcUser user, Model model) {
         if (applicationRequest.getEligible() == null) {
-            return "redirect:/contract/eligibility/check?productId=" + applicationRequest.getProductId()
-                    + "&planId=" + applicationRequest.getPlanId()
-                    + "&age="
-                    + insured.getBirthDate()
-                            .until(java.time.LocalDate.now()).getYears();
+            return "redirect:/contract/eligibility/check?productId="
+                    + applicationRequest.getProductId() + "&planId="
+                    + applicationRequest.getPlanId() + "&age="
+                    + insured.getBirthDate().until(java.time.LocalDate.now()).getYears();
         }
-        var req = new com.example.toshio.client.model.ApplicationRequest()
-                .productId(applicationRequest.getProductId()).planId(applicationRequest.getPlanId())
+        var req = new InsuranceApplicationRequest().productId(applicationRequest.getProductId())
+                .planId(applicationRequest.getPlanId())
                 .policyHolder(convertPerson(applicationRequest.getPolicyHolder()))
-                .insured(convertInsured(applicationRequest.getInsured())).operatorUserId(user.getOpUser().getUserId());
+                .insured(convertInsured(applicationRequest.getInsured()))
+                .operatorUserId(user.getOpUser().getUserId());
 
-        var response = api.applicationPost(req);
+        var response = api.insuranceApplicationPost(req);
         model.addAttribute("applicationId", response.getApplicationId());
         model.addAttribute("step", ApplicationSteps.COMPLETE);
         model.addAttribute("steps", ApplicationSteps.values());
         return "application-result";
     }
 
-    private com.example.toshio.client.model.Person convertPerson(PolicyHolder src) {
-        return new com.example.toshio.client.model.Person().name(src.getName())
-                .address(src.getAddress()).birthDate(src.getBirthDate()).phone(src.getPhone());
+    private Person convertPerson(PolicyHolder src) {
+        return new Person().name(src.getName()).address(src.getAddress())
+                .birthDate(src.getBirthDate()).phone(src.getPhone());
     }
 
     private com.example.toshio.client.model.InsuredPerson convertInsured(InsuredPerson src) {

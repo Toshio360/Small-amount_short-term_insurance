@@ -12,6 +12,7 @@ import lombok.Data;
 @Data
 public class PersonEntity {
   @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
   private String personId;
 
   @Column(nullable = false)

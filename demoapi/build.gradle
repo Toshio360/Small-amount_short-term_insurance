@@ -65,7 +65,8 @@ openApiGenerate {
     modelPackage = 'com.example.toshio.demoapi.model'
     configOptions = [
             interfaceOnly : 'true',
-            useSpringBoot3: 'true',
+            useJakartaEe  : 'true',
+            useSpringBoot4: 'true',
             useTags       : 'true'
     ]
 }

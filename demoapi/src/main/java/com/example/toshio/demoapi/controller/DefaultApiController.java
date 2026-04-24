@@ -3,14 +3,15 @@ package com.example.toshio.demoapi.controller;
 import com.example.toshio.demoapi.api.DefaultApi;
 import com.example.toshio.demoapi.model.*;
 import com.example.toshio.demoapi.service.InsuranceService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 @RestController
 public class DefaultApiController implements DefaultApi {
 
+    @Autowired
     private final InsuranceService insuranceService;
 
     public DefaultApiController(InsuranceService insuranceService) {
@@ -38,7 +39,8 @@ public class DefaultApiController implements DefaultApi {
     }
 
     @Override
-    public ResponseEntity<ApplicationResponse> applicationPost(ApplicationRequest request) {
+    public ResponseEntity<InsuranceApplicationResponse> insuranceApplicationPost(
+            InsuranceApplicationRequest request) {
         return ResponseEntity.ok(insuranceService.applyContract(request));
     }
 

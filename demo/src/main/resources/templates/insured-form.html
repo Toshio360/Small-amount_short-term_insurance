@@ -12,6 +12,16 @@
 
         <form th:action="@{/contract/insured}" method="post" th:object="${insured}" class="card p-4 shadow-sm">
 
+            <!-- 続柄 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">続柄</label>
+                <select th:field="*{relationship}" class="form-select">
+                    <option th:each="r : ${T(com.example.toshio.demo.enums.RelationShip).values()}" th:value="${r}"
+                        th:text="${r.label}">
+                    </option>
+                </select>
+            </div>
+
             <!-- 氏名 -->
             <div class="mb-3">
                 <label class="form-label fw-bold">氏名</label>
@@ -24,14 +34,16 @@
                 <input type="date" th:field="*{birthDate}" class="form-control" onclick="setDefaultBirthDate(this)">
             </div>
 
-            <!-- 続柄 -->
+            <!-- 住所 -->
             <div class="mb-3">
-                <label class="form-label fw-bold">続柄</label>
-                <select th:field="*{relationship}" class="form-select">
-                    <option th:each="r : ${T(com.example.toshio.demo.enums.RelationShip).values()}" th:value="${r}"
-                        th:text="${r.label}">
-                    </option>
-                </select>
+                <label class="form-label fw-bold">住所</label>
+                <input type="text" th:field="*{address}" class="form-control" placeholder="例：東京都新宿区...">
+            </div>
+
+            <!-- 電話番号 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">電話番号</label>
+                <input type="text" th:field="*{phone}" class="form-control" placeholder="例：090-1234-5678">
             </div>
 
             <button type="submit" class="btn btn-primary w-100">次へ</button>

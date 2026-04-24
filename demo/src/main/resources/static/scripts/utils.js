@@ -2,10 +2,10 @@ function setDefaultBirthDate(input) {
     // すでに値が入っているなら何もしない（保持）
     if (input.value) return;
 
-    // 今日から20年前を計算
+    // 今日から30年前を計算
     const today = new Date();
     const twentyYearsAgo = new Date(
-        today.getFullYear() - 20,
+        today.getFullYear() - 30,
         today.getMonth(),
         today.getDate()
     );

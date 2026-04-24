@@ -17,10 +17,16 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://localhost:8080/realms/my-realm
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
 server:
   port: 8088
 client:
-  baseUrl: http://localhost:8089
+  baseUrl: http://demoapi
 logging:
   level:
     root: INFO

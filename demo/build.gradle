@@ -16,9 +16,10 @@ java {
 
 repositories {
 	mavenCentral()
-	mavenLocal()
 }
-
+ext {
+    springCloudVersion = "2025.1.1"
+}
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6'
@@ -27,12 +28,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
     implementation 'org.aspectj:aspectjweaver:1.9.21'
-	implementation 'javax.validation:validation-api:2.0.1.Final'
-	implementation 'javax.annotation:javax.annotation-api:1.3.2'
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 	implementation('org.openapitools:jackson-databind-nullable:0.2.4') {
 		exclude group: 'org.slf4j', module: 'slf4j-simple'
 	}
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.cloud:spring-cloud-starter-config'
+    implementation 'org.springframework.cloud:spring-cloud-starter-loadbalancer:5.0.0-RC1'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
@@ -43,7 +45,11 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 }
-
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
+}
 def openapiYaml = "${rootDir}/../swagger/src/main/resources/static/openapi/contract-api.yaml"
 
 openApiGenerate {
@@ -56,8 +62,10 @@ openApiGenerate {
     library = "resttemplate"
     configOptions = [
             dateLibrary: "java8",
-            useBeanValidation: "true"
-    ]
+            useBeanValidation: "true",
+            useJakartaEe  : 'true',
+            useSpringBoot4: 'true'
+            ]
 }
 
 sourceSets {

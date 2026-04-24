@@ -1,12 +1,17 @@
 ### Spring DIコンテナ学習用のdemo
 ・DIコンテナ学習用のdemo画面です<br>
 ・APIクライアントをOpenAPIのYamlからJavaを自動生成しています</br>
-swaggerプロジェクトはYamlを置くだけのプロジェクトで、model側のbuild.gradleにOpenApi Generatorでjavaを自動生成する設定をしています
+swaggerプロジェクトはYamlを置くだけのプロジェクトで、model側のbuild.gradleにOpenApi Generatorでjavaを自動生成する設定をしています</br>
+・ModelAttributeで画面入力値を保持して再表示させたり、SessionAttributeで各画面の入力値を保持して登録APIを呼び出す際の引数を作成します。</br>
+・フロントのユーザー認証はOpenIDConnect準拠とし、KeycloakをOauth2のプロバイダーとしています。</br>
+・ORマッパーにhibernateしてテーブルもEntityから自動作成しています。</br>
+・EurekaServerにAPIインスタンスを登録し</br>
 
 ## フォルダ構成
 ├demo\ ←Spring Bootのdemoプロジェクト</br>
 ├demoapi\ ←Spring Bootのdemoapiプロジェクト</br>
 ├swagger\ ←OpenAPI形式のAPI定義</br>
+├eureka-server\ ←Eureka\ Serverのプロジェクト</br>
 └README.md←このファイル</br>
 ## 画面起動方法
 1. keycloakを起動する

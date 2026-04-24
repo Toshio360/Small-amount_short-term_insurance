@@ -42,8 +42,64 @@ openApiGenerate {
     outputDir = "$buildDir/generated-docs"
 }
 
+tasks.register("openApiGenerateHtml", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = "html2"
+    inputSpec = openapiFile
+    outputDir = "$buildDir/generated-docs"
+}
+
+tasks.register("openApiGenerateSpring", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = 'spring'
+    inputSpec = openapiFile
+    outputDir = "$buildDir/generated-spring"
+    apiPackage = 'com.example.toshio.demoapi.api'
+    modelPackage = 'com.example.toshio.demoapi.model'
+    configOptions = [
+            interfaceOnly : 'true',
+            useJakartaEe  : 'true',
+            useSpringBoot4: 'true',
+            useTags       : 'true'
+    ]
+}
+tasks.register("openApiGenerateJava", org.openapitools.generator.gradle.plugin.tasks.GenerateTask) {
+    generatorName = "java"
+    inputSpec = openapiFile
+    outputDir = "$buildDir/generated"
+    apiPackage = "com.example.toshio.client.api"
+    modelPackage = "com.example.toshio.client.model"
+    invokerPackage = "com.example.toshio.client.invoker"
+    library = "resttemplate"
+    configOptions = [
+            useSpringBoot4: "true",
+            useJakartaEe: "true",
+            dateLibrary: "java8",
+            useBeanValidation: "true"
+    ]
+}
+
+tasks.register('openApiGenerateAll') {
+    dependsOn openApiGenerateHtml, openApiGenerateJava, openApiGenerateSpring
+    description = "Generate Java(Spring) code and HTML docs"
+    group = "documentation"
+        doLast {
+        delete {
+            delete "../demo/generated"
+            delete "../demoapi/generated"
+        }
+        copy {
+            from "$buildDir/generated"
+            into "../demo/build/generated"
+        }
+        copy {
+            from "$buildDir/generated-spring"
+            into "../demoapi/build/generated"
+        }
+        println "✔ Generated files distributed to each project"
+    }
+}
+
 tasks.register('generateDocs') {
-    dependsOn openApiGenerate
+    dependsOn openApiGenerateHtml
     description = "Generate HTML API documentation"
     group = "documentation"
 }

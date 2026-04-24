@@ -5,8 +5,8 @@ import com.example.toshio.demoapi.entity.OperatorUserEntity;
 import com.example.toshio.demoapi.entity.PersonEntity;
 import com.example.toshio.demoapi.entity.PlanEntity;
 import com.example.toshio.demoapi.entity.ProductEntity;
-import com.example.toshio.demoapi.model.ApplicationRequest;
-import com.example.toshio.demoapi.model.ApplicationResponse;
+import com.example.toshio.demoapi.model.InsuranceApplicationRequest;
+import com.example.toshio.demoapi.model.InsuranceApplicationResponse;
 import com.example.toshio.demoapi.model.EligibilityRequest;
 import com.example.toshio.demoapi.model.EligibilityResponse;
 import com.example.toshio.demoapi.model.EstimateRequest;
@@ -24,12 +24,8 @@ import com.example.toshio.demoapi.repository.PlanRepository;
 import com.example.toshio.demoapi.repository.ProductPlanRepository;
 import com.example.toshio.demoapi.repository.ProductRepository;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-
 import org.jspecify.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -86,7 +82,7 @@ public class InsuranceService {
         }).toList();
     }
 
-    public ApplicationResponse applyContract(ApplicationRequest request) {
+    public InsuranceApplicationResponse applyContract(InsuranceApplicationRequest request) {
 
         // --- ProductEntity を取得 ---
         ProductEntity product = productRepository.findById(request.getProductId())
@@ -104,8 +100,9 @@ public class InsuranceService {
         insuredEntity = personRepository.save(insuredEntity);
 
         // --- OperatorUser（ログインユーザー）を取得 ---
-        OperatorUserEntity operatorUser = operatorUserRepository.findById(request.getOperatorUserId())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid operatorUserId"));
+        OperatorUserEntity operatorUser =
+                operatorUserRepository.findById(request.getOperatorUserId())
+                        .orElseThrow(() -> new IllegalArgumentException("Invalid operatorUserId"));
 
         // --- InsuranceApplicationEntity を組み立てる ---
         InsuranceApplicationEntity entity = new InsuranceApplicationEntity();
@@ -117,9 +114,7 @@ public class InsuranceService {
 
         // 続柄（例：本人 or 家族）
         entity.setRelationship(
-                policyHolderEntity.getName().equals(insuredEntity.getName())
-                        ? "本人"
-                        : "家族");
+                policyHolderEntity.getName().equals(insuredEntity.getName()) ? "本人" : "家族");
 
         // 保険期間（例：固定値 or 計算）
         entity.setPeriod(10);
@@ -130,8 +125,7 @@ public class InsuranceService {
         InsuranceApplicationEntity saved = insuranceApplicationRepository.save(entity);
 
         // --- レスポンス返却 ---
-        return new ApplicationResponse()
-                .applicationId(saved.getApplicationId())
+        return new InsuranceApplicationResponse().applicationId(saved.getApplicationId())
                 .status("申込完了");
     }
 
@@ -153,8 +147,8 @@ public class InsuranceService {
 
     public @Nullable User getUser(String username) {
         var operatorUser = operatorUserRepository.findByUsername(username);
-        return new User().userId(operatorUser.getId())
-                .name(operatorUser.getDisplayName()).email(operatorUser.getEmail());
+        return new User().userId(operatorUser.getId()).name(operatorUser.getDisplayName())
+                .email(operatorUser.getEmail());
     }
 
 }

@@ -112,7 +112,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/EligibilityResponse"
 
-  /application:
+  /insurance-application:
     post:
       summary: 申込
       description: 保険契約の申込を行う
@@ -121,14 +121,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/ApplicationRequest"
+              $ref: "#/components/schemas/InsuranceApplicationRequest"
       responses:
         "200":
           description: 申込結果
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/ApplicationResponse"
+                $ref: "#/components/schemas/InsuranceApplicationResponse"
 
 components:
   schemas:
@@ -255,7 +255,7 @@ components:
         eligible: true
         reason: "申込要件を満たしています"
 
-    ApplicationRequest:
+    InsuranceApplicationRequest:
       description: 申込リクエスト
       type: object
       properties:
@@ -326,7 +326,7 @@ components:
         phone: "090-9876-5432"
         relationship: "SPOUSE"
     
-    ApplicationResponse:
+    InsuranceApplicationResponse:
       description: 申込結果
       type: object
       properties:
