@@ -3,46 +3,59 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hello, World!</title>
+    <title>Welcome</title>
     <style>
       body {
+        margin: 0;
+        height: 100vh;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        margin: 0;
+        background: linear-gradient(120deg, #6a85b6, #bac8e0);
         font-family: "Arial", sans-serif;
-        background: linear-gradient(135deg, #4f79dd 0%, #c3cfe2 100%);
-      }
-
-      .container {
-        text-align: center;
-        background-color: rgba(255, 255, 255, 0.8);
-        padding: 50px;
-        border-radius: 10px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      }
-
-      h1 {
-        font-size: 3em;
-        color: #333;
-        margin: 0;
-        animation: fadeIn 2s ease-in-out;
+        animation: fadeIn 1.5s ease-in-out;
       }
 
       @keyframes fadeIn {
-        from {
-          opacity: 0;
-        }
-        to {
-          opacity: 1;
-        }
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+
+      .box {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.85);
+        padding: 60px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      h1 {
+        margin-bottom: 30px;
+        font-size: 2.8em;
+        color: #333;
+      }
+
+      a.start-btn {
+        padding: 15px 40px;
+        background: #6a85b6;
+        color: white;
+        text-decoration: none;
+        border-radius: 10px;
+        font-size: 1.3em;
+        transition: 0.3s;
+      }
+
+      a.start-btn:hover {
+        background: #4f6a9a;
+        transform: translateY(-3px);
       }
     </style>
   </head>
+
   <body>
-    <div class="container">
-      <a href="/contract/policyholder"><h1>Hello, New World!</h1></a>
+    <div class="box">
+      <h1>申し込みを開始する。</h1>
+      <a href="/contract/policyholder" class="start-btn">Start</a>
     </div>
   </body>
 </html>
